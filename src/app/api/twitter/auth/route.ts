@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
     const headersList = {
       Accept: "*/*",
-      "User-Agent": "auth page",
+      "User-Agent": "surf buddy API",
       "Content-Type": "application/x-www-form-urlencoded",
       Authorization: "Basic " + headerKey,
     };
