@@ -4,14 +4,13 @@ import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const code = req.nextUrl.searchParams.get("code");
+    const code = req.nextUrl.searchParams.get("refresh_token");
     if (!code) {
-      return createResponse("Invalid inputs", { status: 400 });
+      return createResponse("Invalid inputs", { status: 400, allowAll: true });
     }
 
     const headerKey = process.env.TWITTER_AUTH_CODE;
     const clientId = process.env.TWITTER_CLIENT_ID;
-    const redirectUri = process.env.REDIRECT_URL;
 
     const headersList = {
       Accept: "*/*",
@@ -20,7 +19,7 @@ export async function GET(req: NextRequest) {
       Authorization: "Basic " + headerKey,
     };
 
-    const bodyContent = `code=${code}&grant_type=authorization_code&client_id=${clientId}&redirect_uri=${redirectUri}&code_verifier=challenge`;
+    const bodyContent = `refresh_token=${code}&grant_type=refresh_token&client_id=${clientId}`;
 
     const reqOptions = {
       url: "https://api.twitter.com/2/oauth2/token",
@@ -30,21 +29,15 @@ export async function GET(req: NextRequest) {
     };
 
     const authRes = await axios.request(reqOptions);
-    return createResponse(authRes.data);
+    return createResponse(authRes.data, { allowAll: true });
   } catch (error) {
     console.error(error);
-    return createResponse(error, { status: 500 });
+    return createResponse(error, { status: 500, allowAll: true });
   }
 }
 
 /**
      * Example response from twitter
-     * {
-  "token_type": "bearer",
-  "expires_in": 7200,
-  "access_token": "RjlKZjhJNWtFNmN3YjgyQjZiREhQalk0OEt5b1JsMHoxUjctWmg4UDhjXzdnOjE3MTc0NjA2NzY0NTk6MTowOmF0OjE",
-  "scope": "tweet.write offline.access",
-  "refresh_token": "bUFEMWxodVM3SXo3XzJpY2NpMVZTdkM3cnRVc05HbjJMUWg2aXZmWm9TSFBfOjE3MTc0NjA2NzY0NTk6MTowOnJ0OjE"
-}
+ {"token_type":"bearer","expires_in":7200,"access_token":"Z21DTWFmVWJiTUs4S3doS2l1d19Db2szWWlPbURYdjZjZVRzMllieDlmbnNiOjE3MTc1MzE0NjA4NDg6MTowOmF0OjE","scope":"tweet.write offline.access","refresh_token":"aXFnOXM4ejFlcTVhVTlDMV9XaWR5c2owSzZ4Z1ZXUUJnN3h3ZkRYSmQtTmFUOjE3MTc1MzE0NjA4NDg6MTowOnJ0OjE"}
      * 
      */

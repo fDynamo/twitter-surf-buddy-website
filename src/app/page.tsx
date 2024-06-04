@@ -23,7 +23,10 @@ export default function Home() {
         window.location.origin + "/api/twitter/auth?code=" + code;
       const res = await axios.get(apiEndpoint);
 
-      window.postMessage({ actionType: "AUTH_CREDS", authRes: res.data }, "*");
+      window.postMessage(
+        { actionType: "SET_AUTH_CREDS", authRes: res.data },
+        "*"
+      );
     } catch (err) {
       console.error(err);
     }
