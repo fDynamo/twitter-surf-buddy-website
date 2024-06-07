@@ -2,8 +2,8 @@ import { createResponse } from "@/utilities/apiHelpers";
 import axios from "axios";
 
 export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
   try {
-    const { searchParams } = new URL(req.url);
     const code = searchParams.get("code");
     if (!code) {
       return createResponse("Invalid inputs", { status: 400 });
