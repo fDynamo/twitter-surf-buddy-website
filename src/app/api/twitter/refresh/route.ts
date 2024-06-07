@@ -1,10 +1,11 @@
 import { createResponse } from "@/utilities/apiHelpers";
 import axios from "axios";
-import { NextRequest } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET(req: Request) {
   try {
-    const code = req.nextUrl.searchParams.get("refresh_token");
+    const { searchParams } = new URL(req.url);
+    const code = searchParams.get("code");
+
     if (!code) {
       return createResponse("Invalid inputs", { status: 400, allowAll: true });
     }
